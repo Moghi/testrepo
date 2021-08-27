@@ -54,7 +54,7 @@ RUN yum -y install \
 RUN yum -y install java-11-openjdk java-11-openjdk-devel
 # COPY java11.sh /etc/profile.d/
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-11.0.12.0.7-0.el7_9.x86_64/bin/
-# Append AJVA_HOME/bin to PATH ?
+# Append JAVA_HOME/bin to PATH ?
 ## Test Java installation
 COPY testprogram.java /opt/
 RUN java --version && \
