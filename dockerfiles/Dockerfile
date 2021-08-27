@@ -50,6 +50,15 @@ RUN yum -y install \
     git \
     wget
 
+# Install openjdk 11
+RUN yum -y install java-11-openjdk java-11-openjdk-devel
+COPY java11.sh /etc/profile.d/
+## Test Java installation
+COPY testprogram.java /opt/
+RUN java --version && \
+    cd /opt && \
+    javac testprogram.java
+
 # Install ssh
 RUN yum -y install openssh-server \
     && sed -i 's|session  required  pam_loginuid.so|session  optional  pam_loginuid.so|g' /etc/pam.d/sshd \
@@ -75,7 +84,10 @@ RUN git config --global user.mail "some@email.com" \
     && git config --global user.name "some name"
 USER root
 
-# TODO: install maven
+# Install openjdk
+
+
+# Install maven
 ARG MVN_BASE_URL
 ENV MVN_BASE_URL=${MVN_BASE_URL:-https://apache.osuosl.org/maven}
 
