@@ -34,7 +34,7 @@ ENV DIST_ARCH=${DIST_ARCH:-x86_64}
 # in the final image by leveraging the ENV instruction.
 
 RUN groupadd --gid 1000 node \
-  && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
+    && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
 # Download node to tmp
 # Result I want: https://rpm.nodesource.com/pub_16.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm
@@ -70,20 +70,41 @@ RUN ssh-keygen -b 2048 -P "" -t rsa -f /etc/ssh/ssh_host_key \
 
 # config git and npm for jenkinsuser
 USER jenkinsuser
-ADD .npmrc /opt/jenkinsuser
+COPY .npmrc /opt/jenkinsuser
 RUN git config --global user.mail "some@email.com" \
     && git config --global user.name "some name"
 USER root
 
 # TODO: install maven
-ADD https://apache.osuosl.org/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz  /temp/
-ADD https://apache.osuosl.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz  /temp/
+ARG MVN_BASE_URL
+ENV MVN_BASE_URL=${MVN_BASE_URL:-https://apache.osuosl.org/maven}
 
-RUN mkdir -p /usr/share/maven /usr/share/maven/ref
+ADD ${MVN_BASE_URL}/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz /opt/
+ADD ${MVN_BASE_URL}/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz /opt/
+
+## Unpack maven binaries and show the content of the directory
+RUN cd /opt/ && ls *.tar.gz | xargs -i tar -xvf "{}" && ls -la
+
+
+RUN ln -s /opt/apache-maven-3.5.4 /opt/apache-maven-3.5.x && \
+    ln -s /opt/apache-maven-3.6.3 /opt/apache-maven-3.6.x && \
+    ln -s /opt/apache-maven-3.6.x/bin/mvn /usr/bin/mvn
+
+COPY ./mvn_settings.xml /opt/apache-maven-3.5.x/conf
+COPY ./mvn_settings.xml /opt/apache-maven-3.6.x/conf
+
+ENV MAVEN_HOME /opt/apache-maven-3.6.x
+ENV MAVEN_CONFIG "${USER_HOMEDIR}/.m2"
+
+RUN rm -rf /opt/*.tar.gz && \
+    mvn --version
+
+# TODO: Install Tomcat
 
 # TODO: Install latest chrome driver
 # TODO: Install google chrome
 # TODO: Install latest gecko driver
+# TODO: Add certificates
 
 # run sshd in foreground (not detached, that why the option is D)
 CMD ["/usr/sbin/sshd", "-D"]
