@@ -82,9 +82,6 @@ RUN git config --global user.mail "some@email.com" \
     && git config --global user.name "some name"
 USER root
 
-# Install openjdk
-
-
 # Install maven
 ARG MVN_BASE_URL
 ENV MVN_BASE_URL=${MVN_BASE_URL:-https://apache.osuosl.org/maven}
@@ -109,10 +106,15 @@ ENV MAVEN_HOME /opt/apache-maven-3.6.x
 RUN rm -rf /opt/*.tar.gz && \
     mvn --version
 
-# TODO: Install Tomcat
+# Install latest chrome driver
+RUN wget http://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip -P /usr/bin/ && \
+    unzip /usr/bin/chromedriver_linux64.zip -d /usr/bin/ && chmod +x /usr/bin/chromedriver
 
-# TODO: Install latest chrome driver
-# TODO: Install google chrome
+# Install latest google-chrome
+ADD https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm /tmp/
+RUN yum -y install /tmp/google-chrome-stable_current_x86_64.rpm
+
+# TODO: Install Tomcat
 # TODO: Install latest gecko driver
 # TODO: Add certificates
 
