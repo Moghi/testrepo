@@ -115,8 +115,12 @@ RUN wget http://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.stor
 ADD https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm /tmp/
 RUN yum -y install /tmp/google-chrome-stable_current_x86_64.rpm
 
+# Install latest gecko driver
+RUN wget "https://github.com/mozilla/geckodriver/releases/download/v0.29.1/geckodriver-v0.29.1-linux64.tar.gz" -P /usr/bin && \
+    tar xf /usr/bin/geckodriver-*.tar.gz -C /usr/bin && \
+    chmod +x /usr/bin/geckodriver
+
 # TODO: Install Tomcat
-# TODO: Install latest gecko driver
 # TODO: Add certificates
 
 # run sshd in foreground (not detached, that why the option is D)
