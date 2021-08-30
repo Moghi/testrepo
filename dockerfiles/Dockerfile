@@ -55,7 +55,8 @@ RUN rpm -i --nosignature --force nodesource-release-${DIST_TYPE}${DIST_VERSION}-
 # Install other stuff
 RUN yum -y install \
     git \
-    wget
+    wget \
+    unzip
 
 # Install ssh
 RUN yum -y install openssh-server \
