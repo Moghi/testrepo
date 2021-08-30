@@ -8,9 +8,16 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
     yum clean all
 
 # Install Java
-# RUN yum -y install java-1.8.0-openjdk-devel
-# RUN yum -y install java-11-openjdk-devel
-# RUN echo $(java -version)
+# RUN yum -y install java-1.8.0-openjdk java-1.8.0-openjdk-devel
+# Install openjdk 11
+RUN yum -y install java-11-openjdk java-11-openjdk-devel
+# COPY java11.sh /etc/profile.d/
+ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-11.0.12.0.7-0.el7_9.x86_64
+## Test Java installation
+COPY testprogram.java /opt/
+RUN echo $(java --version) && \
+    cd /opt && \
+    javac testprogram.java
 
 # Import GPG-Key
 # https://www.redhat.com/sysadmin/rpm-gpg-verify-packages
@@ -49,17 +56,6 @@ RUN rpm -i --nosignature --force nodesource-release-${DIST_TYPE}${DIST_VERSION}-
 RUN yum -y install \
     git \
     wget
-
-# Install openjdk 11
-RUN yum -y install java-11-openjdk java-11-openjdk-devel
-# COPY java11.sh /etc/profile.d/
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-11.0.12.0.7-0.el7_9.x86_64/bin/
-# Append JAVA_HOME/bin to PATH ?
-## Test Java installation
-COPY testprogram.java /opt/
-RUN java --version && \
-    cd /opt && \
-    javac testprogram.java
 
 # Install ssh
 RUN yum -y install openssh-server \
@@ -108,7 +104,7 @@ COPY ./mvn_settings.xml /opt/apache-maven-3.5.x/conf
 COPY ./mvn_settings.xml /opt/apache-maven-3.6.x/conf
 
 ENV MAVEN_HOME /opt/apache-maven-3.6.x
-ENV MAVEN_CONFIG "${USER_HOMEDIR}/.m2"
+# ENV MAVEN_CONFIG "${USER_HOMEDIR}/.m2"
 
 RUN rm -rf /opt/*.tar.gz && \
     mvn --version
