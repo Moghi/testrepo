@@ -1,0 +1,6 @@
+# python virtual env
+venv
+# vagrant files
+.vagrant
+# Ignore ansible roles
+rockylinux-dev-playbook/roles
