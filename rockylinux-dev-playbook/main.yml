@@ -1,0 +1,32 @@
+---
+- hosts: all
+  vars_files:
+    - default.config.yml
+
+  roles:
+    - role: gantsign.java
+      java_version: '11'
+      java_is_default_installation: yes
+      java_fact_group_name: java
+      when: install_java
+      tags: [javadev]
+
+    # Install addtional Java version
+    # - role: gantsign.java
+    #   java_version: '8'
+    #   java_is_default_installation: no
+    #   java_fact_group_name: java_8
+
+    - role: gantsign.maven
+      maven_version: '3.8.2'
+      maven_is_default_installation: yes
+      maven_fact_group_name: maven
+      when: install_maven
+      tags: [javadev]
+
+    # Additional maven version
+    # - role: gantsign.maven
+    #   maven_version: '3.5.6'
+    #   maven_is_default_installation: no
+    #   maven_fact_group_name: maven_3_5
+  tasks: []

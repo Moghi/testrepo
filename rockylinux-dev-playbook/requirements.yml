@@ -1,0 +1,6 @@
+---
+roles:
+  - name: gantsign.java
+  - name: gantsign.maven
+
+collections: []
