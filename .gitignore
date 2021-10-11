@@ -2,5 +2,6 @@
 venv
 # vagrant files
 .vagrant
+vagrantSync
 # Ignore ansible roles
 rockylinux-dev-playbook/roles

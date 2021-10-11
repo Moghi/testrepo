@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
 
   # By default Vagrant has a sync folder that syncs files between the host and the vagrant box,
   # disable it if you don't need it to prevent any problems with it.
-  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.synced_folder "./vagrant_sync", "/vagrant", disabled: false
 
   # Configure resources that each VM has
   config.vm.provider :virtualbox do |v|
